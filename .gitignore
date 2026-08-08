@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+
+# Storage & Databases
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/vector_store/*
+!backend/vector_store/.gitkeep
+backend/knowledge_base.db
+backend/knowledge_base.db-journal
+
+# Node / React
+node_modules/
+frontend/dist/
+frontend/node_modules/
+.DS_Store
+*.log
