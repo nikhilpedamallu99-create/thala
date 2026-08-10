@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { BrainCircuit, Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, CheckCircle2, AlertCircle, ShieldCheck, Github } from 'lucide-react';
+import { BrainCircuit, Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
