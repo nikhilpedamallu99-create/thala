@@ -9,6 +9,15 @@ const api = axios.create({
   },
 });
 
+// Attach bearer token if present
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('thala_auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const checkHealth = async () => {
   const response = await api.get('/api/health');
   return response.data;
@@ -67,6 +76,21 @@ export const getChatHistory = async () => {
 
 export const clearChatHistory = async () => {
   const response = await api.delete('/api/chat/history');
+  return response.data;
+};
+
+export const loginUser = async (email, password) => {
+  const response = await api.post('/api/auth/login', { email, password });
+  return response.data;
+};
+
+export const signupUser = async (fullName, email, password) => {
+  const response = await api.post('/api/auth/signup', { full_name: fullName, email, password });
+  return response.data;
+};
+
+export const getCurrentUser = async () => {
+  const response = await api.get('/api/auth/me');
   return response.data;
 };
 

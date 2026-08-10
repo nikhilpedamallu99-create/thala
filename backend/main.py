@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routes import health, documents, chat
+from app.routes import health, documents, chat, auth
 from app.config import settings
 
 # Create database tables
@@ -28,6 +28,7 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(documents.router)
 app.include_router(chat.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def root():
