@@ -63,26 +63,52 @@ class VectorStore:
     def add_chunks(
         self,
         document_id: Any,
-        document_name: str = None,
-        filename: str = None,
-        chunks: List[Dict[str, Any]] = None
+        document_name: Any = None,
+        chunks: Any = None,
+        filename: Any = None
     ) -> int:
         """Embed and store document chunks in vector database."""
-        fname = document_name or filename or "Document"
-        if not chunks:
+        actual_chunks = None
+        fname = "Document"
+
+        if isinstance(document_name, list):
+            actual_chunks = document_name
+        elif isinstance(chunks, list):
+            actual_chunks = chunks
+            fname = str(document_name) if document_name else "Document"
+        elif isinstance(filename, list):
+            actual_chunks = filename
+            fname = str(document_name or filename or "Document")
+        elif isinstance(document_id, list):
+            actual_chunks = document_id
+        
+        if not fname or fname == "Document":
+            if isinstance(filename, str):
+                fname = filename
+
+        if not actual_chunks:
+            logger.warning(f"add_chunks called for doc {document_id} with empty chunks list.")
             return 0
 
         str_doc_id = str(document_id)
         # Purge old chunks for document_id if updating
         self.delete_document_chunks(str_doc_id)
 
-        for idx, c in enumerate(chunks):
-            text_content = c.get("content") or c.get("text") or ""
-            if not text_content.strip():
+        added_count = 0
+        for idx, c in enumerate(actual_chunks):
+            if isinstance(c, str):
+                text_content = c
+                page_num = 1
+                chunk_id = idx + 1
+            elif isinstance(c, dict):
+                text_content = c.get("content") or c.get("text") or ""
+                page_num = c.get("page", 1)
+                chunk_id = c.get("chunk_id", idx + 1)
+            else:
                 continue
 
-            page_num = c.get("page", 1)
-            chunk_id = c.get("chunk_id", idx + 1)
+            if not text_content or not text_content.strip():
+                continue
 
             self.chunks_store.append({
                 "id": f"doc_{str_doc_id}_chunk_{chunk_id}",
@@ -95,10 +121,11 @@ class VectorStore:
                     "chunk_id": chunk_id
                 }
             })
+            added_count += 1
 
         self._rebuild_index()
         self._save_to_disk()
-        return len(chunks)
+        return added_count
 
     def add_document_chunks(self, document_id: Any, filename: str, chunks: List[Dict[str, Any]]) -> int:
         """Alias for add_chunks."""
