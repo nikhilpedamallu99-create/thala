@@ -30,9 +30,8 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    logout();
     setShowUserMenu(false);
-    navigate('/');
+    navigate('/logout');
   };
 
   return (

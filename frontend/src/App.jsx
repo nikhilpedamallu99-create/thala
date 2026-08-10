@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import KnowledgeBase from './pages/KnowledgeBase';
 import AISearch from './pages/AISearch';
 import Login from './pages/Login';
+import Logout from './pages/Logout';
 import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/knowledge-base" element={<KnowledgeBase />} />
                 <Route path="/knowledge" element={<KnowledgeBase />} />
