@@ -101,6 +101,7 @@ export default function KnowledgeBase() {
                 onDeleteSuccess={(deletedId) => {
                   setDocuments(documents.filter((d) => d.id !== deletedId));
                 }}
+                onReprocessSuccess={() => fetchDocs()}
               />
             ))}
           </div>

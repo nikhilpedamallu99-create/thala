@@ -64,6 +64,11 @@ export const deleteDocument = async (id) => {
   return response.data;
 };
 
+export const reprocessDocument = async (id) => {
+  const response = await api.post(`/api/documents/${id}/reprocess`);
+  return response.data;
+};
+
 export const askQuestion = async (question) => {
   const response = await api.post('/api/chat', { question });
   return response.data;

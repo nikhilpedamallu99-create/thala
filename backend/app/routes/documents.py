@@ -88,13 +88,30 @@ def get_document(document_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
 
+@router.post("/{document_id}/reprocess", response_model=DocumentResponse)
+def reprocess_document(
+    document_id: str,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    doc = db.query(DocumentModel).filter(DocumentModel.id == document_id).first()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    doc.status = "Processing"
+    doc.error_message = None
+    db.commit()
+
+    background_tasks.add_task(process_document_file, document_id, db)
+    return doc
+
 @router.delete("/{document_id}", status_code=status.HTTP_200_OK)
 def delete_document(document_id: str, db: Session = Depends(get_db)):
     doc = db.query(DocumentModel).filter(DocumentModel.id == document_id).first()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # 1. Delete chunks from ChromaDB
+    # 1. Delete chunks from ChromaDB / TF-IDF vector store
     vector_store.delete_document_chunks(document_id)
 
     # 2. Remove file from disk

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { FileText, Trash2, CheckCircle2, Clock, AlertTriangle, Layers, Database } from 'lucide-react';
-import { deleteDocument } from '../services/api';
+import { FileText, Trash2, CheckCircle2, Clock, AlertTriangle, Layers, RefreshCw } from 'lucide-react';
+import { deleteDocument, reprocessDocument } from '../services/api';
 
-export default function DocumentCard({ doc, onDeleteSuccess }) {
+export default function DocumentCard({ doc, onDeleteSuccess, onReprocessSuccess }) {
   const [deleting, setDeleting] = useState(false);
+  const [reprocessing, setReprocessing] = useState(false);
 
   const handleDelete = async () => {
     if (!window.confirm(`Are you sure you want to delete "${doc.filename}" and its vector embeddings?`)) {
@@ -17,6 +18,18 @@ export default function DocumentCard({ doc, onDeleteSuccess }) {
       alert(err.response?.data?.detail || 'Failed to delete document');
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleReprocess = async () => {
+    setReprocessing(true);
+    try {
+      await reprocessDocument(doc.id);
+      if (onReprocessSuccess) onReprocessSuccess(doc.id);
+    } catch (err) {
+      alert(err.response?.data?.detail || 'Failed to reprocess document');
+    } finally {
+      setReprocessing(false);
     }
   };
 
@@ -83,6 +96,17 @@ export default function DocumentCard({ doc, onDeleteSuccess }) {
 
       <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-0 border-slate-800/80">
         {getStatusBadge(doc.status)}
+        {doc.status === 'Failed' && (
+          <button
+            onClick={handleReprocess}
+            disabled={reprocessing}
+            className="p-2 rounded-lg text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition-all text-xs flex items-center gap-1 font-medium disabled:opacity-50"
+            title="Retry processing document"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${reprocessing ? 'animate-spin' : ''}`} />
+            <span>Retry</span>
+          </button>
+        )}
         <button
           onClick={handleDelete}
           disabled={deleting}
