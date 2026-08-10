@@ -11,7 +11,7 @@ export default function Navbar() {
     const verifyHealth = async () => {
       try {
         const data = await checkHealth();
-        if (data.status === 'healthy') {
+        if (data.status?.toLowerCase() === 'healthy') {
           setHealthStatus('connected');
         } else {
           setHealthStatus('error');
