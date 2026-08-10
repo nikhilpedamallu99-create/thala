@@ -69,6 +69,11 @@ export const reprocessDocument = async (id) => {
   return response.data;
 };
 
+export const getDocumentChunks = async (id) => {
+  const response = await api.get(`/api/documents/${id}/chunks`);
+  return response.data;
+};
+
 export const askQuestion = async (question) => {
   const response = await api.post('/api/chat', { question });
   return response.data;

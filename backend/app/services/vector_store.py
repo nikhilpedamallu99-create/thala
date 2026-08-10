@@ -202,6 +202,21 @@ class VectorStore:
             self._rebuild_index()
             self._save_to_disk()
 
+    def get_document_chunks(self, document_id: Any) -> List[Dict[str, Any]]:
+        """Retrieve all vector chunks associated with a document ID."""
+        str_doc_id = str(document_id)
+        return [
+            {
+                "chunk_id": item["metadata"].get("chunk_id", idx + 1),
+                "page": item["metadata"].get("page", 1),
+                "content": item["document"],
+                "text": item["document"],
+                "snippet": item["document"]
+            }
+            for idx, item in enumerate(self.chunks_store)
+            if str(item["metadata"].get("document_id")) == str_doc_id
+        ]
+
     def count(self) -> int:
         """Return total chunks in vector database."""
         return len(self.chunks_store)

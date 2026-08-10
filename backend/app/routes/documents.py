@@ -88,6 +88,20 @@ def get_document(document_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
 
+@router.get("/{document_id}/chunks")
+def get_document_chunks_endpoint(document_id: str, db: Session = Depends(get_db)):
+    doc = db.query(DocumentModel).filter(DocumentModel.id == document_id).first()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    
+    chunks = vector_store.get_document_chunks(document_id)
+    return {
+        "document_id": document_id,
+        "filename": doc.filename,
+        "total_chunks": len(chunks),
+        "chunks": chunks
+    }
+
 @router.post("/{document_id}/reprocess", response_model=DocumentResponse)
 def reprocess_document(
     document_id: str,
