@@ -103,9 +103,18 @@ export default function Navbar() {
                     <p className="text-[10px] text-slate-400 truncate">{user.email}</p>
                   </div>
 
+                  <Link
+                    to="/login"
+                    onClick={() => setShowUserMenu(false)}
+                    className="w-full px-4 py-2 text-left text-xs text-slate-300 hover:bg-slate-800/80 flex items-center space-x-2 transition-colors mt-1"
+                  >
+                    <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Sign In to Another Account</span>
+                  </Link>
+
                   <button
                     onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left text-xs text-rose-400 hover:bg-rose-500/10 flex items-center space-x-2 transition-colors mt-1"
+                    className="w-full px-4 py-2 text-left text-xs text-rose-400 hover:bg-rose-500/10 flex items-center space-x-2 transition-colors"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Log Out</span>
@@ -116,10 +125,10 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 font-semibold transition-all"
+              className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-xs text-white font-bold shadow-lg shadow-indigo-600/25 transition-all"
             >
-              <LogIn className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Log In</span>
+              <LogIn className="w-4 h-4 text-white" />
+              <span>Sign In</span>
             </Link>
           )}
         </div>
