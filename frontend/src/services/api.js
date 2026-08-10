@@ -89,6 +89,11 @@ export const signupUser = async (fullName, email, password) => {
   return response.data;
 };
 
+export const loginGoogleUser = async (googleData = {}) => {
+  const response = await api.post('/api/auth/google', googleData);
+  return response.data;
+};
+
 export const getCurrentUser = async () => {
   const response = await api.get('/api/auth/me');
   return response.data;

@@ -50,6 +50,13 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+class GoogleLoginRequest(BaseModel):
+    id_token: Optional[str] = None
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    google_id: Optional[str] = None
+    picture: Optional[str] = None
+
 class SignUpRequest(BaseModel):
     full_name: str
     email: str

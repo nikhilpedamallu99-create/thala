@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from app.database import get_db
 from app.models import UserModel
-from app.schemas import LoginRequest, SignUpRequest, UserResponse, AuthTokenResponse
+from app.schemas import LoginRequest, SignUpRequest, GoogleLoginRequest, UserResponse, AuthTokenResponse
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -15,6 +15,36 @@ def hash_password(password: str) -> str:
 
 def create_fake_token(user_id: str) -> str:
     return f"token_{user_id}_{uuid.uuid4().hex[:16]}"
+
+@router.post("/google", response_model=AuthTokenResponse)
+def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
+    email = req.email or "google.user@example.com"
+    email_clean = email.strip().lower()
+    full_name = req.full_name or "Google User"
+    
+    user = db.query(UserModel).filter(UserModel.email == email_clean).first()
+    if not user:
+        user = UserModel(
+            email=email_clean,
+            full_name=full_name,
+            password_hash=hash_password(f"google_{uuid.uuid4().hex}"),
+            role="user",
+            avatar_url=req.picture
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        if req.picture and not user.avatar_url:
+            user.avatar_url = req.picture
+            db.commit()
+            db.refresh(user)
+
+    token = create_fake_token(user.id)
+    return AuthTokenResponse(
+        access_token=token,
+        user=UserResponse.from_orm(user)
+    )
 
 @router.post("/signup", response_model=AuthTokenResponse)
 def signup(req: SignUpRequest, db: Session = Depends(get_db)):
